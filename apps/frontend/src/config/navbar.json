@@ -1,0 +1,16 @@
+{
+  "logo": {
+    "text": "Tobiloba Ayomide",
+    "href": "/"
+  },
+  "links": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    }
+  ]
+}

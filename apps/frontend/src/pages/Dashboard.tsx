@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DynamicRenderer from '../components/DynamicRenderer';
 import Modal from '../components/Modal';
+import { trackEvent, EVENTS } from '../utils/analytics';
 
 interface DashboardConfig {
  id: number;
@@ -22,6 +23,10 @@ const Dashboard: React.FC = () => {
 
  const handleSectionClick = (section: DashboardConfig) => {
    if (section.onClickType === 'modal') {
+     trackEvent(EVENTS.MODAL_OPEN, {
+       component: 'Dashboard',
+       title: section.title,
+     });
      setModalContent({ title: section.title, content: section.description || '' });
      setModalOpen(true);
    }
