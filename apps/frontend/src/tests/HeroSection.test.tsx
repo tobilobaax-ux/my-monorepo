@@ -19,6 +19,21 @@ vi.mock('../config/hero.json', () => ({
       stats: [
         { value: '99', label: 'Tests Passed' }
       ]
+    },
+    modals: {
+      work: {
+        label: "Work With Me",
+        title: "Start a Project",
+        description: "Test Work Description"
+      },
+      connect: {
+        label: "Connect With Me",
+        title: "Let's Connect",
+        description: "Test Connect Description",
+        socials: [
+          { platform: "LinkedIn", url: "https://linkedin.com", description: "Professional Network" }
+        ]
+      }
     }
   },
 }));
