@@ -17,9 +17,15 @@ export interface ProfileConfig {
   stats: Stat[];
 }
 
+import { ModalConfig } from './modal';
+
 export interface HeroConfig {
   heroText: HeroTextConfig;
   profile: ProfileConfig;
+  modals: {
+    work: ModalConfig & { label: string };
+    connect: ModalConfig & { label: string; socials: { platform: string; url: string; description: string }[] };
+  };
 }
 
 export interface HeroTextProps extends HeroTextConfig {}

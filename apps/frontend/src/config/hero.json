@@ -13,6 +13,22 @@
       { "value": "3+", "label": "Years Exp." },
       { "value": "10+", "label": "Projects" }
     ]
+  },
+  "modals": {
+    "work": {
+      "label": "Work With Me",
+      "title": "Start a Project",
+      "description": "Looking for a lead architect or partner to build your next product? Drop a message below and I'll get back to you within 24 hours."
+    },
+    "connect": {
+      "label": "Connect With Me",
+      "title": "Let's Connect",
+      "description": "Whether it's a quick question, a potential collaboration, or just to say hi—I'm always open to connecting with fellow builders and creators.",
+      "socials": [
+        { "platform": "LinkedIn", "url": "https://linkedin.com", "description": "Professional Network" },
+        { "platform": "Twitter", "url": "https://twitter.com", "description": "Latest Updates" }
+      ]
+    }
   }
 }
 

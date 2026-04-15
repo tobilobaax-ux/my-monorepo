@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import HeroText from './HeroText';
 import ProfileCard from './ProfileCard';
-
+import WorkModal from './modals/WorkModal';
+import ConnectModal from './modals/ConnectModal';
+import { trackEvent } from '../utils/analytics';
 import { HeroConfig } from '../types/hero';
 
 const HeroSkeleton = () => (
@@ -18,10 +20,25 @@ const HeroSkeleton = () => (
 
 const HeroSection: React.FC = () => {
   const [config, setConfig] = useState<HeroConfig | null>(null);
+  const [workOpen, setWorkOpen] = useState(false);
+  const [connectOpen, setConnectOpen] = useState(false);
 
   useEffect(() => {
-    import('../config/hero.json').then((data) => setConfig(data.default as HeroConfig));
+    import('../config/hero.json').then((data) => {
+      setConfig(data.default as HeroConfig);
+      trackEvent('hero_view', { source: 'homepage' });
+    });
   }, []);
+
+  const handleWorkClick = () => {
+    setWorkOpen(true);
+    trackEvent('cta_work_click', { action: 'open_modal' });
+  };
+
+  const handleConnectClick = () => {
+    setConnectOpen(true);
+    trackEvent('cta_connect_click', { action: 'open_modal' });
+  };
 
   return (
     <section className="relative bg-[#fafafa] min-h-[calc(100vh-64px)] flex items-center py-16 lg:py-24 overflow-hidden">
@@ -32,7 +49,7 @@ const HeroSection: React.FC = () => {
         style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='turbulence' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10"> 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12 items-center">
           
           {/* Left Column: Content */}
@@ -45,6 +62,10 @@ const HeroSection: React.FC = () => {
                 heading={config.heroText.heading}
                 subheading={config.heroText.subheading}
                 intro={config.heroText.intro}
+                onWorkClick={handleWorkClick}
+                onConnectClick={handleConnectClick}
+                workLabel={config.modals.work.label}
+                connectLabel={config.modals.connect.label}
               />
             )}
           </div>
@@ -65,6 +86,23 @@ const HeroSection: React.FC = () => {
           
         </div>
       </div>
+
+      {/* Modals with dynamic config */}
+      {config && (
+        <>
+          <WorkModal 
+            isOpen={workOpen} 
+            onClose={() => setWorkOpen(false)} 
+            config={config.modals.work}
+          />
+          <ConnectModal 
+            isOpen={connectOpen} 
+            onClose={() => setConnectOpen(false)} 
+            config={config.modals.connect}
+            socials={config.modals.connect.socials}
+          />
+        </>
+      )}
     </section>
   );
 };

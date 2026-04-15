@@ -1,37 +1,68 @@
-import React from 'react';
-import { Modal as MUIModal, Box, Typography, Button } from '@mui/material';
+import React, { useEffect } from 'react';
 
 interface ModalProps {
- open: boolean;
- onClose: () => void;
- title: string;
- content: string;
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
 }
 
-const style = {
- position: 'absolute' as 'absolute',
- top: '50%',
- left: '50%',
- transform: 'translate(-50%, -50%)',
- width: 400,
- bgcolor: 'background.paper',
- borderRadius: 2,
- boxShadow: 24,
- p: 4,
-};
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
 
-const Modal: React.FC<ModalProps> = ({ open, onClose, title, content }) => {
- return (
-   <MUIModal open={open} onClose={onClose}>
-     <Box sx={style}>
-       <Typography variant="h6" component="h2">{title}</Typography>
-       <Typography sx={{ mt: 2 }}>{content}</Typography>
-       <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={onClose}>
-         Close
-       </Button>
-     </Box>
-   </MUIModal>
- );
+  // Handle escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      {/* Backdrop */}
+      <div 
+        data-testid="modal-backdrop"
+        className="absolute inset-0 bg-gray-900/40 backdrop-blur-md transition-opacity animate-in fade-in duration-300" 
+        onClick={onClose}
+      />
+
+      {/* Modal Surface */}
+      <div className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl shadow-gray-900/20 overflow-hidden flex flex-col animate-in zoom-in-95 slide-in-from-bottom-8 duration-500 ease-out">
+        
+        {/* Header */}
+        <div className="px-8 pt-8 pb-4 flex justify-between items-center border-b border-gray-100/50">
+          <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">{title}</h2>
+          <button 
+            onClick={onClose}
+            className="p-2 -mr-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-all"
+            aria-label="Close modal"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="px-8 pb-8 pt-4 overflow-y-auto max-h-[85vh] no-scrollbar">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Modal;
