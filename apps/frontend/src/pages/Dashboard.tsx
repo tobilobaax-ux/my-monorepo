@@ -33,17 +33,24 @@ const Dashboard: React.FC = () => {
  };
 
  return (
-   <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-     {sections.map((section) => (
-       <DynamicRenderer
-         key={section.id}
-         componentName={section.componentType}
-         props={{
-           ...section,
-           onClick: () => handleSectionClick(section),
-         }}
-       />
-     ))}
+   <div className="flex flex-col min-h-screen">
+
+     <main className="flex-grow p-8 bg-gray-50">
+       <div className="max-w-7xl mx-auto">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           {sections.map((section) => (
+             <DynamicRenderer
+               key={section.id}
+               componentName={section.componentType}
+               props={{
+                 ...section,
+                 onClick: () => handleSectionClick(section),
+               }}
+             />
+           ))}
+         </div>
+       </div>
+     </main>
 
      <Modal
        open={modalOpen}
