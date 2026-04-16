@@ -24,12 +24,16 @@ vi.mock('../config/hero.json', () => ({
       work: {
         label: "Work With Me",
         title: "Start a Project",
-        description: "Test Work Description"
+        description: "Test Work Description",
+        projectTypes: [
+          { id: "Test", label: "Test Label", description: "Test Desc", iconType: "box" }
+        ]
       },
       connect: {
         label: "Connect With Me",
         title: "Let's Connect",
         description: "Test Connect Description",
+        email: "test@example.com",
         socials: [
           { platform: "LinkedIn", url: "https://linkedin.com", description: "Professional Network" }
         ]

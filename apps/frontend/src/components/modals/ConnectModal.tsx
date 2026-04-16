@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
-import { trackEvent } from '../../utils/analytics';
+import { trackEvent, EVENTS } from '../../utils/analytics';
 import { ConnectModalProps } from '../../types/modal';
 
 // Premium Icons
@@ -29,18 +29,25 @@ const CheckIcon = () => (
   </svg>
 );
 
+const SocialIcon = ({ platform }: { platform: string }) => {
+  const normalized = platform.toLowerCase();
+  if (normalized.includes('linkedin')) return <LinkedInIcon />;
+  if (normalized.includes('twitter') || normalized.includes('x')) return <TwitterIcon />;
+  return <TwitterIcon />;
+};
+
 const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config, socials }) => {
   const [copied, setCopied] = useState(false);
-  const email = "hello@tobiloba.com";
+  const email = config?.email || '';
 
   useEffect(() => {
-    if (isOpen) trackEvent('modal_open', { type: 'connect_with_me' });
+    if (isOpen) trackEvent(EVENTS.MODAL_OPEN, { type: 'connect_with_me' });
   }, [isOpen]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(email);
     setCopied(true);
-    trackEvent('cta_connect_email_copy');
+    trackEvent(EVENTS.COPY_TO_CLIPBOARD, { target: 'email', value: email });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -52,7 +59,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config, so
         {config.description}
       </p>
 
-      {/* Social Cards - More Compact on Mobile */}
+      {/* Social Cards */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
         {(socials || []).map((social) => (
           <a 
@@ -60,17 +67,17 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config, so
             href={social.url} 
             target="_blank" 
             rel="noopener noreferrer"
-            onClick={() => trackEvent('cta_connect_social_click', { platform: social.platform })}
+            onClick={() => trackEvent(EVENTS.CTA_CLICK, { platform: social.platform, url: social.url })}
             className={`
               flex flex-col items-center sm:items-start gap-2 sm:gap-4 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 group hover:shadow-xl hover:-translate-y-1 text-center sm:text-left
-              ${social.platform.toLowerCase() === 'linkedin' 
+              ${social.platform.toLowerCase().includes('linkedin') 
                 ? 'bg-[#0077b5]/5 border-[#0077b5]/10 hover:border-[#0077b5]/30' 
                 : 'bg-slate-50 border-slate-100 hover:border-gray-900/10'}
             `}
           >
             <div className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl sm:rounded-2xl transition-transform group-hover:scale-110 shadow-sm
-              ${social.platform.toLowerCase() === 'linkedin' ? 'bg-[#0077b5] text-white' : 'bg-gray-900 text-white'}`}>
-              {social.platform.toLowerCase() === 'linkedin' ? <LinkedInIcon /> : <TwitterIcon />}
+              ${social.platform.toLowerCase().includes('linkedin') ? 'bg-[#0077b5] text-white' : 'bg-gray-900 text-white'}`}>
+              <SocialIcon platform={social.platform} />
             </div>
             <div className="flex flex-col">
               <span className="text-sm sm:text-base font-bold text-gray-900">{social.platform}</span>
@@ -80,23 +87,25 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config, so
         ))}
       </div>
 
-      {/* Copy Email Card - Compact Mobile */}
-      <button
-        onClick={handleCopy}
-        className="w-full flex items-center justify-between p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-slate-300 hover:shadow-lg group mb-6 sm:mb-8"
-      >
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl sm:rounded-2xl bg-white border border-slate-100 text-slate-400 group-hover:text-gray-900 transition-colors shadow-sm">
-            {copied ? <CheckIcon /> : <CopyIcon />}
+      {/* Copy Email Card */}
+      {email && (
+        <button
+          onClick={handleCopy}
+          className="w-full flex items-center justify-between p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-white hover:border-slate-300 hover:shadow-lg group mb-6 sm:mb-8"
+        >
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl sm:rounded-2xl bg-white border border-slate-100 text-slate-400 group-hover:text-gray-900 transition-colors shadow-sm">
+              {copied ? <CheckIcon /> : <CopyIcon />}
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-sm sm:text-base font-bold text-gray-900">{email}</span>
+              <span className="text-[9px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+                {copied ? 'Copied!' : 'Click to copy'}
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col text-left">
-            <span className="text-sm sm:text-base font-bold text-gray-900">{email}</span>
-            <span className="text-[9px] sm:text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-              {copied ? 'Copied!' : 'Click to copy'}
-            </span>
-          </div>
-        </div>
-      </button>
+        </button>
+      )}
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center" aria-hidden="true">

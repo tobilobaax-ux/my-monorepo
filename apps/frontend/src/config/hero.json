@@ -18,12 +18,19 @@
     "work": {
       "label": "Work With Me",
       "title": "Start a Project",
-      "description": "Looking for a lead architect or partner to build your next product? Drop a message below and I'll get back to you within 24 hours."
+      "description": "Looking for a lead architect or partner to build your next product? Drop a message below and I'll get back to you within 24 hours.",
+      "projectTypes": [
+        { "id": "Full Product", "label": "Product", "description": "Build from scratch", "iconType": "box" },
+        { "id": "UI/UX Design", "label": "UI/UX", "description": "Visual design", "iconType": "design" },
+        { "id": "Technical Audit", "label": "Audit", "description": "Scale review", "iconType": "audit" },
+        { "id": "Consultation", "label": "Strategy", "description": "Expert advice", "iconType": "consultation" }
+      ]
     },
     "connect": {
       "label": "Connect With Me",
       "title": "Let's Connect",
       "description": "Whether it's a quick question, a potential collaboration, or just to say hi—I'm always open to connecting with fellow builders and creators.",
+      "email": "hello@tobiloba.com",
       "socials": [
         { "platform": "LinkedIn", "url": "https://linkedin.com", "description": "Professional Network" },
         { "platform": "Twitter", "url": "https://twitter.com", "description": "Latest Updates" }
@@ -31,4 +38,3 @@
     }
   }
 }
-

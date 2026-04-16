@@ -52,12 +52,13 @@ const Dashboard: React.FC = () => {
        </div>
      </main>
 
-     <Modal
-       open={modalOpen}
-       onClose={() => setModalOpen(false)}
-       title={modalContent.title}
-       content={modalContent.content}
-     />
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalContent.title}
+      >
+        <p className="text-gray-600">{modalContent.content}</p>
+      </Modal>
    </div>
  );
 };

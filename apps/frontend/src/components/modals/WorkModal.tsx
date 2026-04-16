@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
-import { trackEvent } from '../../utils/analytics';
+import { trackEvent, EVENTS } from '../../utils/analytics';
 import { WorkModalProps } from '../../types/modal';
 
 // Premium Icons as SVG Components
@@ -41,21 +41,24 @@ const CheckIcon = () => (
   </svg>
 );
 
+const IconRenderer = ({ type }: { type: string }) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    box: <FullProductIcon />,
+    design: <DesignIcon />,
+    audit: <AuditIcon />,
+    consultation: <ConsultationIcon />,
+  };
+  return iconMap[type] || <FullProductIcon />;
+};
+
 const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
-  const projectTypes = [
-    { id: 'Full Product', label: 'Product', description: 'Build from scratch', icon: <FullProductIcon /> },
-    { id: 'UI/UX Design', label: 'UI/UX', description: 'Visual design', icon: <DesignIcon /> },
-    { id: 'Technical Audit', label: 'Audit', description: 'Scale review', icon: <AuditIcon /> },
-    { id: 'Consultation', label: 'Strategy', description: 'Expert advice', icon: <ConsultationIcon /> },
-  ];
-
   useEffect(() => {
     if (isOpen) {
-      trackEvent('modal_open', { type: 'work_with_me' });
+      trackEvent(EVENTS.MODAL_OPEN, { type: 'work_with_me' });
       setStep(1);
       setSelectedType(null);
     }
@@ -63,14 +66,14 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
 
   const handleTypeSelect = (type: string) => {
     setSelectedType(type);
-    trackEvent('cta_work_step_1_select', { type });
+    trackEvent(EVENTS.CTA_CLICK, { action: 'select_project_type', value: type });
     setTimeout(() => setStep(2), 300);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    trackEvent('cta_work_submit', { type: selectedType });
+    trackEvent(EVENTS.FORM_SUBMIT, { form: 'work_with_me', type: selectedType });
     setTimeout(() => {
       setLoading(false);
       setStep(3);
@@ -90,7 +93,7 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
               {config.description}
             </p>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {projectTypes.map((item) => (
+              {config.projectTypes.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleTypeSelect(item.id)}
@@ -105,7 +108,7 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
                     w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl transition-all duration-300
                     ${selectedType === item.id ? 'bg-white/10 text-white' : 'bg-white text-slate-400 group-hover:text-gray-900 shadow-sm'}
                   `}>
-                    {item.icon}
+                    <IconRenderer type={item.iconType} />
                   </div>
                   <div className="flex-1">
                     <h4 className="text-sm sm:text-base font-extrabold tracking-tight">{item.label}</h4>
@@ -119,7 +122,7 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
           </div>
         )}
 
-        {/* Step 2: Form Details - Compact Mobile */}
+        {/* Step 2: Form Details */}
         {step === 2 && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-500">
             <header className="mb-6 flex items-center justify-between gap-4">
@@ -143,7 +146,7 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
                 className="w-full bg-gray-900 text-white rounded-xl sm:rounded-[1.5rem] py-4 sm:py-5 text-sm sm:text-base font-extrabold hover:bg-gray-800 transition-all shadow-xl active:scale-[0.98]"
               >
                 {loading ? (
-                  <span className="w-5 h-5 border-3 border-white/20 border-t-white rounded-full animate-spin" />
+                  <span className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>Send Message</>
                 )}

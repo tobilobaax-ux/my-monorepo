@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroTextProps } from '../types/hero';
+import { ExtendedHeroTextProps } from '../types/hero';
 
 const ArrowRight = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -15,16 +15,9 @@ const LinkIcon = () => (
   </svg>
 );
 
-interface ExtendedHeroTextProps extends HeroTextProps {
-  onWorkClick?: () => void;
-  onConnectClick?: () => void;
-  workLabel?: string;
-  connectLabel?: string;
-}
-
 const HeroText: React.FC<ExtendedHeroTextProps> = ({ 
   badge, 
-  heading, 
+  heading = '', 
   subheading, 
   intro, 
   onWorkClick, 
