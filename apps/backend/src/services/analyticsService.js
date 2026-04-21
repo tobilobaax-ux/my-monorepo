@@ -1,29 +1,38 @@
 const db = require("../db");
 const { analyticsEvents, heroLeads } = require("../db/schema");
-const { sql, eq, like } = require("drizzle-orm");
+const { sql, eq, like, or } = require("drizzle-orm");
 
 /**
  * Gets a high-level summary of all platform metrics.
  */
 async function getAnalyticsSummary() {
+    // 1. Get raw counts from Drizzle (Drizzle handles the event_type vs eventType mapping)
     const [leadsCount] = await db.select({ count: sql`count(*)` }).from(heroLeads);
-    const [viewsCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents).where(sql`event_type = 'page_view'`);
-    const [clicksCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents).where(sql`event_type LIKE 'cta_%'`);
-    const [modalCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents).where(sql`event_type = 'modal_open'`);
+    const [viewsCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
+        .where(eq(analyticsEvents.eventType, 'page_view'));
+    
+    const [clicksCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
+        .where(or(
+            like(analyticsEvents.eventType, '%click%'),
+            eq(analyticsEvents.eventType, 'cta_click')
+        ));
+    
+    const [modalCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
+        .where(like(analyticsEvents.eventType, '%modal%'));
 
-    const views = Number(viewsCount.count);
-    const clicks = Number(clicksCount.count);
-    const opens = Number(modalCount.count);
-    const leads = Number(leadsCount.count);
+    const views = Number(viewsCount?.count || 0);
+    const clicks = Number(clicksCount?.count || 0);
+    const opens = Number(modalCount?.count || 0);
+    const leads = Number(leadsCount?.count || 0);
 
     return {
         totalLeads: leads,
         totalPageViews: views,
         totalCTAClicks: clicks,
         totalModalOpens: opens,
-        conversionRate: views > 0 ? ((leads / views) * 100).toFixed(2) : 0,
-        ctr: views > 0 ? ((clicks / views) * 100).toFixed(2) : 0,
-        modalRate: clicks > 0 ? ((opens / clicks) * 100).toFixed(2) : 0
+        conversionRate: views > 0 ? ((leads / views) * 100).toFixed(1) : "0.0",
+        ctr: views > 0 ? ((clicks / views) * 100).toFixed(1) : "0.0",
+        modalRate: clicks > 0 ? ((opens / clicks) * 100).toFixed(1) : "0.0"
     };
 }
 
@@ -38,7 +47,8 @@ async function getPageViewMetrics() {
     .from(analyticsEvents)
     .where(eq(analyticsEvents.eventType, 'page_view'))
     .groupBy(analyticsEvents.pageUrl)
-    .orderBy(sql`count(*) DESC`);
+    .orderBy(sql`count(*) DESC`)
+    .limit(10);
 }
 
 /**
@@ -50,9 +60,10 @@ async function getCTAClickMetrics() {
         count: sql`count(*)`
     })
     .from(analyticsEvents)
-    .where(like(analyticsEvents.eventType, 'cta_%'))
+    .where(like(analyticsEvents.eventType, '%click%'))
     .groupBy(analyticsEvents.ctaId)
-    .orderBy(sql`count(*) DESC`);
+    .orderBy(sql`count(*) DESC`)
+    .limit(10);
 }
 
 module.exports = {

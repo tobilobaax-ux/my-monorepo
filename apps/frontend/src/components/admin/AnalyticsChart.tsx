@@ -15,12 +15,15 @@ const AnalyticsChart: React.FC<AnalyticsChartProps> = ({ data, title }) => {
       
       <div className="space-y-6">
         {data.map((item) => (
-          <div key={item.label} className="space-y-2">
-            <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          <div key={item.label} className="space-y-2 group/bar">
+            <div className="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest transition-colors group-hover/bar:text-gray-900">
               <span>{item.label}</span>
-              <span>{item.value}%</span>
+              <span className="opacity-0 group-hover/bar:opacity-100 transition-opacity flex items-center gap-1">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L24 24H0L12 0Z"/></svg>
+                {item.value}%
+              </span>
             </div>
-            <div className="w-full h-2 bg-gray-50 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-gray-50 rounded-full overflow-hidden border border-transparent group-hover/bar:border-gray-100 transition-all">
               <div 
                 className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out`} 
                 style={{ width: `${item.value}%` }} 

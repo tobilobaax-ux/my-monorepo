@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -7,12 +7,21 @@ import Dashboard from './pages/Dashboard';
 import AboutPage from './pages/AboutPage';
 import LoginPage from './pages/LoginPage';
 
+import { trackEvent, EVENTS } from './utils/analytics';
+
+import CookieConsent from './components/CookieConsent';
+
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
 
+  useEffect(() => {
+    trackEvent(EVENTS.PAGE_VIEW, { path: location.pathname });
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
+      <CookieConsent />
       {!isDashboard && <Navbar />}
       {children}
       {!isDashboard && <Footer />}

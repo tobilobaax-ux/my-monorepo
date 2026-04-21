@@ -77,15 +77,53 @@ app.post("/api/v1/hero/lead", async (req, res) => {
   }
 });
 
-// Analytics Event Endpoint
-app.post("/api/v1/analytics/events", async (req, res) => {
+// Simple Rate Limiter for Analytics (Section 7. SECURE)
+const rateLimitMap = new Map();
+const ANALYTICS_LIMIT = 50; // events per minute
+const RATE_LIMIT_WINDOW = 60000;
+
+const analyticsRateLimiter = (req, res, next) => {
+  const ip = req.ip || req.headers['x-forwarded-for'];
+  const now = Date.now();
+  
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 1, firstEvent: now });
+    return next();
+  }
+
+  const data = rateLimitMap.get(ip);
+  if (now - data.firstEvent > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { count: 1, firstEvent: now });
+    return next();
+  }
+
+  if (data.count >= ANALYTICS_LIMIT) {
+    return res.status(429).json({ error: "Too many analytics events" });
+  }
+
+  data.count++;
+  next();
+};
+
+// Main Analytics Event Ingestion (Section 3. BUILD)
+app.post("/api/v1/analytics/events", analyticsRateLimiter, async (req, res) => {
+  if (process.env.ANALYTICS_TRACKING_ENABLED === "false") return res.status(200).json({ skipped: true });
+  
   try {
-    const { eventType, pageUrl, ctaId, payload } = req.body;
-    if (!eventType) return res.status(400).json({ error: "Event type required" });
-    await db.insert(analyticsEvents).values({ eventType, pageUrl, ctaId, payload });
+    const { event_type, page_url, cta_id, session_id, user_agent, payload } = req.body;
+    
+    await db.insert(analyticsEvents).values({
+      eventType: event_type,
+      pageUrl: page_url,
+      ctaId: cta_id,
+      sessionId: session_id,
+      userAgent: user_agent,
+      payload: payload
+    });
     res.status(201).json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: "Supabase sync error" });
+    console.error('Analytics Ingestion Error:', err);
+    res.status(500).json({ error: "Failed to log event" });
   }
 });
 
@@ -96,13 +134,26 @@ const {
 } = require("./services/analyticsService");
 
 // Admin Analytics Summary
+// Analytics Summary Cache (Section 3. BUILD -> Performance)
+let summaryCache = null;
+let lastCacheUpdate = 0;
+const CACHE_TTL = 60000; // 1 minute
+
 app.get("/api/v1/admin/analytics/summary", async (req, res) => {
   const adminPasscode = req.headers["x-admin-passcode"];
   if (adminPasscode !== (process.env.DASHBOARD_PASSCODE || "admin123")) {
     return res.status(401).json({ error: "Unauthorized" });
   }
+
+  const now = Date.now();
+  if (summaryCache && (now - lastCacheUpdate < CACHE_TTL)) {
+    return res.json({ ...summaryCache, cached: true });
+  }
+
   try {
     const summary = await getAnalyticsSummary();
+    summaryCache = summary;
+    lastCacheUpdate = now;
     res.json(summary);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch analytics summary" });

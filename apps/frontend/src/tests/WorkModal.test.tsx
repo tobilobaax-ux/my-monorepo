@@ -4,6 +4,11 @@ import WorkModal from '../components/modals/WorkModal';
 import { trackEvent, EVENTS } from '../utils/analytics';
 import '@testing-library/jest-dom';
 
+// Mock api
+vi.mock('../utils/api', () => ({
+  submitLead: vi.fn(() => Promise.resolve({ success: true })),
+}));
+
 // Mock analytics
 vi.mock('../utils/analytics', () => ({
   trackEvent: vi.fn(),

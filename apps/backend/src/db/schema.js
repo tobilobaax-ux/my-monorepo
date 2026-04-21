@@ -13,6 +13,8 @@ const analyticsEvents = pgTable("analytics_events", {
   eventType: text("event_type").notNull(),
   pageUrl: text("page_url"),
   ctaId: text("cta_id"),
+  sessionId: text("session_id"),
+  userAgent: text("user_agent"),
   payload: jsonb("payload"),
   timestamp: timestamp("timestamp").defaultNow(),
 });
