@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import HeroText from './HeroText';
 import ProfileCard from './ProfileCard';
 import WorkModal from './modals/WorkModal';
 import ConnectModal from './modals/ConnectModal';
 import { trackEvent } from '../utils/analytics';
 import { HeroConfig } from '../types/hero';
+
+interface HeroSectionProps {
+  externalConfig: HeroConfig | null;
+}
 
 const HeroSkeleton = () => (
   <div className="animate-pulse space-y-8">
@@ -18,17 +22,9 @@ const HeroSkeleton = () => (
   </div>
 );
 
-const HeroSection: React.FC = () => {
-  const [config, setConfig] = useState<HeroConfig | null>(null);
+const HeroSection: React.FC<HeroSectionProps> = ({ externalConfig }) => {
   const [workOpen, setWorkOpen] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
-
-  useEffect(() => {
-    import('../config/hero.json').then((data) => {
-      setConfig(data.default as HeroConfig);
-      trackEvent('hero_view', { source: 'homepage' });
-    });
-  }, []);
 
   const handleWorkClick = () => {
     setWorkOpen(true);
@@ -41,7 +37,7 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative bg-[#fafafa] min-h-[calc(100vh-64px)] flex items-center py-16 lg:py-24 overflow-hidden">
+    <section className="relative bg-[#fafafa] flex items-center py-16 lg:py-24 overflow-hidden min-h-[calc(100vh-64px)]">
       
       {/* Rough / TV Static Noise Overlay */}
       <div 
@@ -54,32 +50,33 @@ const HeroSection: React.FC = () => {
           
           {/* Left Column: Content */}
           <div className="flex flex-col justify-center">
-            {!config ? (
+            {!externalConfig ? (
               <HeroSkeleton />
             ) : (
               <HeroText
-                badge={config.heroText.badge}
-                heading={config.heroText.heading}
-                subheading={config.heroText.subheading}
-                intro={config.heroText.intro}
+                badge={externalConfig.heroText.badge}
+                heading={externalConfig.heroText.heading}
+                subheading={externalConfig.heroText.subheading}
+                intro={externalConfig.heroText.intro}
                 onWorkClick={handleWorkClick}
                 onConnectClick={handleConnectClick}
-                workLabel={config.modals.work.label}
-                connectLabel={config.modals.connect.label}
+                workLabel={externalConfig.modals.work.label}
+                connectLabel={externalConfig.modals.connect.label}
               />
             )}
           </div>
 
           {/* Right Column: Visual */}
           <div className="flex justify-center lg:justify-end items-center mt-12 lg:mt-0">
-            {!config ? (
+            {!externalConfig ? (
               <div className="w-full max-w-md aspect-[4/5] bg-slate-100 rounded-3xl animate-pulse" />
             ) : (
               <ProfileCard
-                name={config.profile.name}
-                role={config.profile.role}
-                image={config.profile.image}
-                stats={config.profile.stats}
+                name={externalConfig.profile.name}
+                role={externalConfig.profile.role}
+                image={externalConfig.profile.image}
+                stats={externalConfig.profile.stats}
+                funFacts={externalConfig.profile.funFacts}
               />
             )}
           </div>
@@ -88,18 +85,17 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Modals with dynamic config */}
-      {config && (
+      {externalConfig && (
         <>
           <WorkModal 
             isOpen={workOpen} 
             onClose={() => setWorkOpen(false)} 
-            config={config.modals.work}
+            config={externalConfig.modals.work}
           />
           <ConnectModal 
             isOpen={connectOpen} 
             onClose={() => setConnectOpen(false)} 
-            config={config.modals.connect}
-            socials={config.modals.connect.socials}
+            config={externalConfig.modals.connect}
           />
         </>
       )}

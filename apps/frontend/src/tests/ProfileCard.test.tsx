@@ -11,7 +11,8 @@ describe('ProfileCard Component', () => {
     stats: [
       { value: '3+', label: 'Years Exp.' },
       { value: '10+', label: 'Projects' }
-    ]
+    ],
+    funFacts: ['Fact 1', 'Fact 2']
   };
 
   it('renders the core identity details (name and role)', () => {
@@ -26,6 +27,12 @@ describe('ProfileCard Component', () => {
     expect(screen.getByText('Years Exp.')).toBeInTheDocument();
     expect(screen.getByText('10+')).toBeInTheDocument();
     expect(screen.getByText('Projects')).toBeInTheDocument();
+  });
+
+  it('renders all provided fun facts', () => {
+    render(<ProfileCard {...defaultProps} />);
+    expect(screen.getByText('Fact 1')).toBeInTheDocument();
+    expect(screen.getByText('Fact 2')).toBeInTheDocument();
   });
 
   it('renders an image with the correct initial src and alternates to fallback on error', () => {

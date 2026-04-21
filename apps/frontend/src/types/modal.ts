@@ -12,11 +12,29 @@ export interface ModalConfig {
   description: string;
 }
 
+export interface FormField {
+  name: string;
+  type: 'text' | 'email' | 'textarea' | 'select';
+  placeholder: string;
+  required?: boolean;
+  halfWidth?: boolean;
+  options?: string[];
+}
+
 export interface ProjectType {
   id: string;
   label: string;
   description: string;
   iconType: string;
+  formSchema: FormField[];
+}
+
+export interface ConnectOption {
+  id: string;
+  label: string;
+  description: string;
+  iconType: string;
+  formSchema: FormField[];
 }
 
 export interface WorkModalProps {
@@ -28,10 +46,8 @@ export interface WorkModalProps {
 export interface ConnectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  config?: ModalConfig & { email: string };
-  socials?: {
-    platform: string;
-    url: string;
-    description: string;
-  }[];
+  config?: ModalConfig & { 
+    email: string;
+    options: ConnectOption[];
+  };
 }

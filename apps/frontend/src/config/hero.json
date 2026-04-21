@@ -1,4 +1,9 @@
 {
+  "flags": {
+    "hero_section_enabled": true,
+    "analytics_tracking_enabled": true,
+    "analytics_dashboard_enabled": true
+  },
   "heroText": {
     "badge": "Available for new projects",
     "heading": "Build Better Digital Experiences",
@@ -12,6 +17,12 @@
     "stats": [
       { "value": "3+", "label": "Years Exp." },
       { "value": "10+", "label": "Projects" }
+    ],
+    "funFacts": [
+      "Coffee enthusiast",
+      "Night owl coder",
+      "Open source fan",
+      "UI perfectionist"
     ]
   },
   "modals": {
@@ -20,21 +31,102 @@
       "title": "Start a Project",
       "description": "Looking for a lead architect or partner to build your next product? Drop a message below and I'll get back to you within 24 hours.",
       "projectTypes": [
-        { "id": "Full Product", "label": "Product", "description": "Build from scratch", "iconType": "box" },
-        { "id": "UI/UX Design", "label": "UI/UX", "description": "Visual design", "iconType": "design" },
-        { "id": "Technical Audit", "label": "Audit", "description": "Scale review", "iconType": "audit" },
-        { "id": "Consultation", "label": "Strategy", "description": "Expert advice", "iconType": "consultation" }
+        { 
+          "id": "Delivery Project", 
+          "label": "Deliver Project", 
+          "description": "Custom Development", 
+          "iconType": "box",
+          "formSchema": [
+            { "name": "fullName", "type": "text", "placeholder": "Full Name", "required": true, "halfWidth": true },
+            { "name": "email", "type": "email", "placeholder": "Email Address", "required": true, "halfWidth": true },
+            { "name": "scope", "type": "select", "placeholder": "Project Scope", "options": ["MVP (0 to 1)", "Feature Scaling", "Design System", "Technical Audit"], "halfWidth": true },
+            { "name": "budget", "type": "select", "placeholder": "Budget Range", "options": ["$5k - $10k", "$10k - $30k", "$30k - $50k", "$50k+"], "halfWidth": true },
+            { "name": "timeline", "type": "select", "placeholder": "Expected Timeline", "options": ["< 1 Month", "1-3 Months", "3-6 Months", "Ongoing"], "halfWidth": true },
+            { "name": "platform", "type": "select", "placeholder": "Target Platform", "options": ["Web App (React/Next)", "Mobile (Native/Cross)", "Full Ecosystem"], "halfWidth": true },
+            { "name": "vision", "type": "textarea", "placeholder": "Tell me about the product vision and business goals...", "required": true }
+          ]
+        },
+        { 
+          "id": "Mentor Me", 
+          "label": "Mentor Me", 
+          "description": "1-on-1 Guidance", 
+          "iconType": "mentorship",
+          "formSchema": [
+            { "name": "fullName", "type": "text", "placeholder": "Full Name", "required": true, "halfWidth": true },
+            { "name": "email", "type": "email", "placeholder": "Email Address", "required": true, "halfWidth": true },
+            { "name": "level", "type": "select", "placeholder": "Current Proficiency", "options": ["Junior / Student", "Mid-Level Engineer", "Senior / Architect"], "halfWidth": true },
+            { "name": "topic", "type": "select", "placeholder": "Primary Focus", "options": ["System Architecture", "Frontend Mastery", "Career Growth", "Code Review"], "halfWidth": true },
+            { "name": "goals", "type": "textarea", "placeholder": "What are your specific learning objectives for the next 3 months?", "required": true }
+          ]
+        },
+        { 
+          "id": "Coffee with Me", 
+          "label": "Coffee with Me", 
+          "description": "Casual Connection", 
+          "iconType": "coffee",
+          "formSchema": [
+            { "name": "fullName", "type": "text", "placeholder": "Full Name", "required": true },
+            { "name": "email", "type": "email", "placeholder": "Email Address", "required": true },
+            { "name": "location", "type": "select", "placeholder": "Preferred Sync", "options": ["Virtual (Google Meet)", "Virtual (Twitter/X)", "In-person (Lagos, NG)"] },
+            { "name": "reason", "type": "textarea", "placeholder": "What's on your mind? (Casual chat, feedback, or collab)", "required": true }
+          ]
+        }
       ]
     },
     "connect": {
       "label": "Connect With Me",
       "title": "Let's Connect",
-      "description": "Whether it's a quick question, a potential collaboration, or just to say hi—I'm always open to connecting with fellow builders and creators.",
+      "description": "Whether it's a technical audit or just a quick chat, pick a path below and let's make it happen.",
       "email": "hello@tobiloba.com",
-      "socials": [
-        { "platform": "LinkedIn", "url": "https://linkedin.com", "description": "Professional Network" },
-        { "platform": "Twitter", "url": "https://twitter.com", "description": "Latest Updates" }
+      "options": [
+        {
+          "id": "Site Audit",
+          "label": "Site Audit",
+          "description": "Comprehensive Review",
+          "iconType": "audit",
+          "formSchema": [
+            { "name": "fullName", "type": "text", "placeholder": "Full Name", "required": true, "halfWidth": true },
+            { "name": "email", "type": "email", "placeholder": "Email Address", "required": true, "halfWidth": true },
+            { "name": "url", "type": "text", "placeholder": "Project URL (https://...)", "required": true },
+            { "name": "stack", "type": "text", "placeholder": "Current Tech Stack", "required": true, "halfWidth": true },
+            { "name": "priority", "type": "select", "placeholder": "Core Focus", "options": ["Performance", "Accessibility", "Design Consistency", "SEO"], "halfWidth": true },
+            { "name": "reason", "type": "textarea", "placeholder": "What's the primary issue you'd like me to address?", "required": true }
+          ]
+        },
+        {
+          "id": "15 Minutes Chat",
+          "label": "15 Minutes Chat",
+          "description": "Quick sync / Intro",
+          "iconType": "chat",
+          "formSchema": [
+            { "name": "fullName", "type": "text", "placeholder": "Full Name", "required": true },
+            { "name": "email", "type": "email", "placeholder": "Email Address", "required": true },
+            { "name": "topic", "type": "select", "placeholder": "Chat Focus", "options": ["Introduction", "Collab Inquiry", "Feedback", "Just saying Hi"], "required": true },
+            { "name": "vibe", "type": "textarea", "placeholder": "Any specific topic you'd like to dive into?", "required": true }
+          ]
+        },
+        {
+          "id": "1-2-Many Tech CatchUp",
+          "label": "1-2-Many Tech CatchUp",
+          "description": "Group Knowledge Sharing",
+          "iconType": "group",
+          "formSchema": [
+            { "name": "fullName", "type": "text", "placeholder": "Full Name (Lead)", "required": true, "halfWidth": true },
+            { "name": "email", "type": "email", "placeholder": "Email Address", "required": true, "halfWidth": true },
+            { "name": "org", "type": "text", "placeholder": "Organization / Group Name", "required": true },
+            { "name": "size", "type": "select", "placeholder": "Group Size", "options": ["2-5 People", "5-10 People", "10-20 People", "20+ People"], "halfWidth": true },
+            { "name": "tech", "type": "text", "placeholder": "Tech Focus (e.g. React, Next, AI)", "required": true, "halfWidth": true },
+            { "name": "context", "type": "textarea", "placeholder": "Briefly describe the session goal...", "required": true }
+          ]
+        }
       ]
     }
+  },
+  "footer": {
+    "owner": "Tobiloba",
+    "links": [
+      { "label": "Terms", "url": "/terms" },
+      { "label": "Privacy", "url": "/privacy" }
+    ]
   }
 }

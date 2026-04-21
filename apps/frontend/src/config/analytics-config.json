@@ -1,0 +1,13 @@
+{
+  "metrics": [
+    { "id": "totalPageViews", "label": "Traffic", "description": "Universal Visits", "icon": "eye" },
+    { "id": "totalCTAClicks", "label": "Intent", "description": "CTA Interaction", "icon": "click" },
+    { "id": "totalModalOpens", "label": "Engagement", "description": "Interaction Depth", "icon": "modal" },
+    { "id": "totalLeads", "label": "Success", "description": "Verified Leads", "icon": "check" }
+  ],
+  "charts": [
+    { "id": "visibility", "label": "Visibility", "color": "bg-gray-900" },
+    { "id": "engagement", "label": "Engagement", "color": "bg-gray-400" },
+    { "id": "capture", "label": "Capture", "color": "bg-gray-200" }
+  ]
+}
