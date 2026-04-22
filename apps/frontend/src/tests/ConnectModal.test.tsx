@@ -14,6 +14,14 @@ vi.mock('../utils/analytics', () => ({
   }
 }));
 
+// Mock API so no real network calls are made in CI
+vi.mock('../utils/api', () => ({
+  submitLead: vi.fn().mockResolvedValue({ success: true }),
+}));
+
+// Stub window.alert — jsdom doesn't implement it
+vi.stubGlobal('alert', vi.fn());
+
 const mockConfig = {
   title: "Let's Connect",
   description: "Test Description",
@@ -35,6 +43,7 @@ const mockConfig = {
 describe('ConnectModal Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal('alert', vi.fn());
   });
 
   it('renders Step 1 with professional options', () => {
