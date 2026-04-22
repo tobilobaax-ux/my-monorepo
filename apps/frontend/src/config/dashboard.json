@@ -1,30 +1,24 @@
-[
- {
-   "id": 1,
-   "componentType": "Card",
-   "title": "Project Alpha",
-   "description": "This is my first project",
-   "onClickType": "modal"
- },
- {
-   "id": 2,
-   "componentType": "Card",
-   "title": "Project Beta",
-   "description": "This is my second project",
-   "onClickType": "modal"
- },
- {
-   "id": 3,
-   "componentType": "InfoPanel",
-   "title": "Stats",
-   "content": "You have 3 projects online"
- },
- {
- "id": 4,
- "componentType": "Card",
- "title": "Project Gamma",
- "description": "Third project dynamically loaded",
- "onClickType": "modal"
+{
+  "sidebar": [
+    { "id": "dashboard", "label": "Overview", "iconPath": "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" },
+    { "id": "listings", "label": "Listings", "iconPath": "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" },
+    { "id": "bookings", "label": "Bookings", "iconPath": "M3 4h18v18H3z M16 2v4 M8 2v4 M3 10h18" },
+    { "id": "analytics", "label": "Analytics", "iconPath": "M18 20V10M12 20V4M6 20v-6" },
+    { "id": "finance", "label": "Finance", "iconPath": "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" }
+  ],
+  "roadmap": {
+    "title": "Coming Soon",
+    "description": "This section is currently in the Week 2 development roadmap.",
+    "syncLabel": "Sync Data",
+    "logoutLabel": "Logout",
+    "hubLabel": "Admin Hub"
+  },
+  "modules": [
+    {
+      "id": 1,
+      "componentType": "AnalyticsOverview",
+      "title": "Project Analytics",
+      "description": "Real-time Supabase performance metrics"
+    }
+  ]
 }
-
-]

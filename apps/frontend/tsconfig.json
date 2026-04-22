@@ -13,6 +13,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "paths": {
+      "shared": ["../../packages/shared/src/index.js"]
+    },
 
     /* Linting */
     "strict": true,

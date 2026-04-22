@@ -4,4 +4,8 @@ export const componentRegistry: Record<string, React.LazyExoticComponent<any>> =
   Card: lazy(() => import('./Card')),
   Modal: lazy(() => import('./Modal')),
   InfoPanel: lazy(() => import('./InfoPanel')),
+  Navbar: lazy(() => import('./Navbar')),
+  HeroSection: lazy(() => import('./HeroSection')),
+  // Elite Analytics Component
+  AnalyticsOverview: lazy(() => import('./admin/AnalyticsOverview')),
 };
