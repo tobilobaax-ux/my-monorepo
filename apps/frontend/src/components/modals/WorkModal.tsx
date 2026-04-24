@@ -55,16 +55,26 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
 
   useEffect(() => {
     if (isOpen) {
-      trackEvent(EVENTS.MODAL_OPEN, { type: 'work_with_me' });
+      trackEvent(EVENTS.CLICKED, { ctaId: 'Work With Me', action: 'modal_open' });
       setStep(1);
       setSelectedType(null);
       setErrors({});
     }
   }, [isOpen]);
 
+  const handleClose = () => {
+    if (step < 3) {
+      const optionName = selectedType ? ` - ${selectedType.id}` : '';
+      trackEvent(EVENTS.ABANDONED, { 
+        ctaId: `Work With Me${optionName} Journey Not Completed / Abandoned`
+      });
+    }
+    onClose();
+  };
+
   const handleTypeSelect = (type: ProjectType) => {
     setSelectedType(type);
-    trackEvent(EVENTS.CTA_CLICK, { action: 'select_project_type', value: type.id });
+    trackEvent(EVENTS.CLICKED, { ctaId: `Work With Me - ${type.id} option clicked` });
     setStep(2);
   };
 
@@ -96,7 +106,7 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
     setLoading(true);
     try {
       await submitLead('work_with_me', selectedType.id, data);
-      trackEvent(EVENTS.FORM_SUBMIT, { form: 'work_with_me', type: selectedType.id });
+      trackEvent(EVENTS.COMPLETED, { ctaId: `Work With Me - ${selectedType.id} Journey Completed` });
       setStep(3);
     } catch (err) {
       alert("Something went wrong. Please try again.");
@@ -108,7 +118,7 @@ const WorkModal: React.FC<WorkModalProps> = ({ isOpen, onClose, config }) => {
   if (!config) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={config.title}>
+    <Modal isOpen={isOpen} onClose={handleClose} title={config.title}>
       <div className="flex flex-col">
         
         {/* Step 1: Option Selection */}

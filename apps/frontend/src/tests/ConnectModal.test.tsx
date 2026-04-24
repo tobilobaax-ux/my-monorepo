@@ -8,9 +8,10 @@ import '@testing-library/jest-dom';
 vi.mock('../utils/analytics', () => ({
   trackEvent: vi.fn(),
   EVENTS: {
-    MODAL_OPEN: "modal_open",
-    CTA_CLICK: "cta_click",
-    FORM_SUBMIT: "form_submit"
+    VIEWED: "Viewed Event",
+    CLICKED: "Clicked Event",
+    COMPLETED: "Completed Event",
+    ABANDONED: "Abandoned Event"
   }
 }));
 
@@ -49,7 +50,7 @@ describe('ConnectModal Component', () => {
   it('renders Step 1 with professional options', () => {
     render(<ConnectModal isOpen={true} onClose={() => {}} config={mockConfig as any} />);
     expect(screen.getByText("Site Audit")).toBeInTheDocument();
-    expect(trackEvent).toHaveBeenCalledWith(EVENTS.MODAL_OPEN, { type: 'connect_with_me' });
+    expect(trackEvent).toHaveBeenCalledWith(EVENTS.CLICKED, expect.objectContaining({ ctaId: 'Connect With Me' }));
   });
 
   it('transitions to Step 2 and renders dynamic fields', async () => {
@@ -60,6 +61,7 @@ describe('ConnectModal Component', () => {
     
     await waitFor(() => {
       expect(screen.getByPlaceholderText("Full Name")).toBeInTheDocument();
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.CLICKED, expect.objectContaining({ ctaId: /Connect With Me - Site Audit option Clicked/i }));
     });
   });
 
@@ -80,6 +82,7 @@ describe('ConnectModal Component', () => {
     
     await waitFor(() => {
       expect(screen.getByText(/Request Sent/i)).toBeInTheDocument();
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.COMPLETED, expect.objectContaining({ ctaId: /Connect With Me - Site Audit Journey Completed/i }));
     }, { timeout: 2000 });
   });
 });

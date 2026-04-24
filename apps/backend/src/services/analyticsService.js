@@ -9,21 +9,21 @@ async function getAnalyticsSummary() {
     // 1. Get raw counts from Drizzle (Drizzle handles the event_type vs eventType mapping)
     const [leadsCount] = await db.select({ count: sql`count(*)` }).from(heroLeads);
     const [viewsCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
-        .where(eq(analyticsEvents.eventType, 'page_view'));
+        .where(eq(analyticsEvents.eventType, 'Viewed Event'));
     
     const [clicksCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
-        .where(or(
-            like(analyticsEvents.eventType, '%click%'),
-            eq(analyticsEvents.eventType, 'cta_click')
-        ));
+        .where(eq(analyticsEvents.eventType, 'Clicked Event'));
     
     const [modalCount] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
-        .where(like(analyticsEvents.eventType, '%modal%'));
+        .where(like(analyticsEvents.ctaId, '%modal_open%'));
+    
+    const [leadsCountNew] = await db.select({ count: sql`count(*)` }).from(analyticsEvents)
+        .where(eq(analyticsEvents.eventType, 'Completed Event'));
 
     const views = Number(viewsCount?.count || 0);
     const clicks = Number(clicksCount?.count || 0);
     const opens = Number(modalCount?.count || 0);
-    const leads = Number(leadsCount?.count || 0);
+    const leads = Number(leadsCount?.count || 0) + Number(leadsCountNew?.count || 0);
 
     return {
         totalLeads: leads,
@@ -40,15 +40,25 @@ async function getAnalyticsSummary() {
  * Gets page view metrics grouped by URL.
  */
 async function getPageViewMetrics() {
-    return await db.select({
+    const urls = await db.select({
         url: analyticsEvents.pageUrl,
         count: sql`count(*)`
     })
     .from(analyticsEvents)
-    .where(eq(analyticsEvents.eventType, 'page_view'))
+    .where(eq(analyticsEvents.eventType, 'Viewed Event'))
     .groupBy(analyticsEvents.pageUrl)
     .orderBy(sql`count(*) DESC`)
     .limit(10);
+
+    // Also include 'Hero Section Viewed' which is our primary metric
+    const [heroViewed] = await db.select({
+        url: sql`'(hero section viewed)'`,
+        count: sql`count(*)`
+    })
+    .from(analyticsEvents)
+    .where(like(analyticsEvents.ctaId, '%section: hero%'));
+
+    return [...urls, heroViewed].filter(i => i && i.count > 0);
 }
 
 /**
@@ -60,10 +70,14 @@ async function getCTAClickMetrics() {
         count: sql`count(*)`
     })
     .from(analyticsEvents)
-    .where(like(analyticsEvents.eventType, '%click%'))
+    .where(or(
+        eq(analyticsEvents.eventType, 'Clicked Event'),
+        eq(analyticsEvents.eventType, 'Completed Event'),
+        eq(analyticsEvents.eventType, 'Abandoned Event')
+    ))
     .groupBy(analyticsEvents.ctaId)
     .orderBy(sql`count(*) DESC`)
-    .limit(10);
+    .limit(25);
 }
 
 module.exports = {

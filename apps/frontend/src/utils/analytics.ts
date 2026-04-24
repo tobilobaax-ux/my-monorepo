@@ -2,10 +2,10 @@ import { syncEvent } from './api';
 import heroConfig from '../config/hero.json';
 
 export const EVENTS = {
-  PAGE_VIEW: 'page_view',
-  CTA_CLICK: 'cta_click',
-  MODAL_OPEN: 'modal_open',
-  FORM_SUBMIT: 'form_submit',
+  VIEWED: 'Viewed Event',
+  CLICKED: 'Clicked Event',
+  COMPLETED: 'Completed Event',
+  ABANDONED: 'Abandoned Event',
 };
 
 const getSessionId = () => {
@@ -22,7 +22,7 @@ export const trackEvent = async (eventType: string, data: any = {}) => {
   if (heroConfig.flags?.analytics_tracking_enabled === false) return;
 
   const consent = typeof localStorage !== 'undefined' ? localStorage.getItem('tx_cookie_consent') : null;
-  if (!consent && eventType !== EVENTS.PAGE_VIEW) return;
+  if (!consent && eventType !== EVENTS.VIEWED) return;
 
   const BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || 'http://localhost:3001';
   const API_URL = `${BASE_URL}/api/v1/analytics/events`;
