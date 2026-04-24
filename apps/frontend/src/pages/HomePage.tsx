@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { HeroConfig } from '../types/hero';
-import { trackEvent } from '../utils/analytics';
 import ComponentRenderer from '../components/ComponentRenderer';
 
 const HomePage: React.FC = () => {
@@ -9,7 +8,6 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     import('../config/hero.json').then((data) => {
       setConfig(data.default as HeroConfig);
-      trackEvent('page_view', { page: 'homepage' });
     });
   }, []);
 

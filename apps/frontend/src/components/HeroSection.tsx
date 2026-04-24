@@ -3,8 +3,9 @@ import HeroText from './HeroText';
 import ProfileCard from './ProfileCard';
 import WorkModal from './modals/WorkModal';
 import ConnectModal from './modals/ConnectModal';
-import { trackEvent } from '../utils/analytics';
+import { trackEvent, EVENTS } from '../utils/analytics';
 import { HeroConfig } from '../types/hero';
+import { useEffect } from 'react';
 
 interface HeroSectionProps {
   externalConfig: HeroConfig | null;
@@ -26,14 +27,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({ externalConfig }) => {
   const [workOpen, setWorkOpen] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
 
+  useEffect(() => {
+    trackEvent(EVENTS.VIEWED, { section: 'hero' });
+  }, []);
+
   const handleWorkClick = () => {
     setWorkOpen(true);
-    trackEvent('cta_work_click', { action: 'open_modal' });
+    trackEvent(EVENTS.CLICKED, { ctaId: 'Work With Me' });
   };
 
   const handleConnectClick = () => {
     setConnectOpen(true);
-    trackEvent('cta_connect_click', { action: 'open_modal' });
+    trackEvent(EVENTS.CLICKED, { ctaId: 'Connect With Me' });
   };
 
   return (

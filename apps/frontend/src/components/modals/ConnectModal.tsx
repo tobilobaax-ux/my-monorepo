@@ -58,16 +58,26 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config }) 
 
   useEffect(() => {
     if (isOpen) {
-      trackEvent(EVENTS.MODAL_OPEN, { type: 'connect_with_me' });
+      trackEvent(EVENTS.CLICKED, { ctaId: 'Connect With Me', action: 'modal_open' });
       setStep(1);
       setSelectedPath(null);
       setErrors({});
     }
   }, [isOpen]);
 
+  const handleClose = () => {
+    if (step < 3) {
+      const optionLabel = selectedPath ? ` - ${selectedPath.id}` : '';
+      trackEvent(EVENTS.ABANDONED, { 
+        ctaId: `Connect With Me${optionLabel} Journey Not Completed / Abandoned`
+      });
+    }
+    onClose();
+  };
+
   const handlePathSelect = (path: ConnectOption) => {
     setSelectedPath(path);
-    trackEvent(EVENTS.CTA_CLICK, { action: 'select_connect_path', value: path.id });
+    trackEvent(EVENTS.CLICKED, { ctaId: `Connect With Me - ${path.id} option Clicked` });
     setStep(2);
   };
 
@@ -99,7 +109,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config }) 
     setLoading(true);
     try {
       await submitLead('connect_with_me', selectedPath.id, data);
-      trackEvent(EVENTS.FORM_SUBMIT, { form: 'connect_with_me', type: selectedPath.id });
+      trackEvent(EVENTS.COMPLETED, { ctaId: `Connect With Me - ${selectedPath.id} Journey Completed` });
       setStep(3);
     } catch (err) {
       alert("Something went wrong. Please try again.");
@@ -111,7 +121,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isOpen, onClose, config }) 
   if (!config) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={config.title}>
+    <Modal isOpen={isOpen} onClose={handleClose} title={config.title}>
       <div className="flex flex-col">
         
         {/* Step 1: Elite Path Selection */}

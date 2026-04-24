@@ -16,7 +16,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isDashboard = location.pathname === '/dashboard';
 
   useEffect(() => {
-    trackEvent(EVENTS.PAGE_VIEW, { path: location.pathname });
+    trackEvent(EVENTS.VIEWED, { path: location.pathname });
   }, [location.pathname]);
 
   return (
