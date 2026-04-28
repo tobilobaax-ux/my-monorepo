@@ -1,0 +1,8 @@
+{
+  "greeting": "Hi 👋 I can help you get started",
+  "helpText": "Get Help",
+  "guidanceText": "I can guide you to our best solutions. Check them out below.",
+  "ctaLabel": "Go to Solutions",
+  "ctaPath": "/solutions",
+  "fallbackMessage": "Something went wrong. Try again."
+}
