@@ -11,6 +11,8 @@ import { trackEvent, EVENTS } from './utils/analytics';
 
 import CookieConsent from './components/CookieConsent';
 
+import ChatWidget from './components/chatbot/ChatWidget';
+
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
@@ -24,6 +26,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <CookieConsent />
       {!isDashboard && <Navbar />}
       {children}
+      <ChatWidget />
       {!isDashboard && <Footer />}
     </div>
   );
